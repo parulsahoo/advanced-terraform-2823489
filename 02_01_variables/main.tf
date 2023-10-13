@@ -6,7 +6,7 @@ variable "aws_access_key" {}
 variable "aws_secret_key" {}
 
 variable "region" {
-  default = "us-east-2"
+  default = "ap-south-1"
 }
 
 variable "vpc_cidr" {
@@ -62,6 +62,10 @@ variable "environment_instance_settings" {
       monitoring = true
     }
   }
+}
+
+variable "deploy_environment" {
+  default = "DEV"
 }
 
 # //////////////////////////////
@@ -141,14 +145,17 @@ resource "aws_security_group" "sg-nodejs-instance" {
 # INSTANCE
 resource "aws_instance" "nodejs1" {
   ami = data.aws_ami.aws-linux.id
-  instance_type = var.environment_instance_type["DEV"]
+  instance_type = var.environment_instance_type[var.deploy_environment]
+  // or can also do
   //instance_type = var.environment_instance_settings["PROD"].instance_type
   subnet_id = aws_subnet.subnet1.id
   vpc_security_group_ids = [aws_security_group.sg-nodejs-instance.id]
 
-  monitoring = var.environment_instance_settings["PROD"].monitoring
+  monitoring = var.environment_instance_settings[var.deploy_environment].monitoring
 
-  tags = {Environment = var.environment_list[0]}
+  # tags = {Environment = var.environment_list[0]} 
+  /// or we can alternatively use the the map as such
+  tags = {Enviroment = var.environment_map[var.deploy_environment]} 
 
 }
 

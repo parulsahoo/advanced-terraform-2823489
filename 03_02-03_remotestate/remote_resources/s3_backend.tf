@@ -6,7 +6,7 @@ variable "aws_access_key" {}
 variable "aws_secret_key" {}
 
 variable "bucket_name" {
-  default = "red30-tfstate"
+  default = "parul-tfstate"
 }
 
 # //////////////////////////////
@@ -15,20 +15,20 @@ variable "bucket_name" {
 provider "aws" {
   access_key = var.aws_access_key
   secret_key = var.aws_secret_key
-  region = "us-east-2"
+  region = "ap-northeast-1"
 }
 
 # //////////////////////////////
 # TERRAFORM USER
 # //////////////////////////////
 data "aws_iam_user" "terraform" {
-  user_name = "terraform"
+  user_name = "terraform_learner"
 }
 
 # //////////////////////////////
 # S3 BUCKET
 # //////////////////////////////
-resource "aws_s3_bucket" "red30-tfremotestate" {
+resource "aws_s3_bucket" "parul-tfremotestate" {
   bucket = var.bucket_name
   force_destroy = true
   acl = "private"
@@ -38,7 +38,7 @@ resource "aws_s3_bucket" "red30-tfremotestate" {
   }
 
   # Grant read/write access to the terraform user
-  policy = <<EOF
+  policy = <<EOT
 {
     "Version": "2008-10-17",
     "Statement": [
@@ -53,11 +53,11 @@ resource "aws_s3_bucket" "red30-tfremotestate" {
         }
     ]
 }
-EOF
+EOT
 }
 
-resource "aws_s3_bucket_public_access_block" "red30-tfremotestate" {
-  bucket = aws_s3_bucket.red30-tfremotestate.id
+resource "aws_s3_bucket_public_access_block" "parul-tfremotestate" {
+  bucket = aws_s3_bucket.parul-tfremotestate.id
 
   block_public_acls   = true
   block_public_policy = true
